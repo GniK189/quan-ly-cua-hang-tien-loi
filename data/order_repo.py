@@ -1,6 +1,7 @@
 from data.db import db_instance
 from datetime import datetime, timedelta
 import pymongo
+import calendar
 
 class OrderRepo:
     def __init__(self):
@@ -73,5 +74,67 @@ class OrderRepo:
             },
             {"$sort": {"total_qty": -1}}, # Sắp xếp giảm dần theo số lượng
             {"$limit": limit}
+        ]
+        return list(self.collection.aggregate(pipeline))
+    
+    def get_stats_by_month(self, month, year):
+        """Lấy thống kê doanh thu theo từng ngày trong tháng"""
+        start_date = datetime(year, month, 1)
+        # Tính ngày cuối tháng
+        last_day = calendar.monthrange(year, month)[1]
+        end_date = datetime(year, month, last_day, 23, 59, 59)
+
+        pipeline = [
+            {
+                "$match": {
+                    "created_at": {"$gte": start_date, "$lte": end_date}
+                }
+            },
+            {
+                "$group": {
+                    "_id": {"$dayOfMonth": "$created_at"}, # Group theo ngày
+                    "daily_revenue": {"$sum": "$total"},
+                    "order_count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"_id": 1}}
+        ]
+        
+        results = list(self.collection.aggregate(pipeline))
+        
+        # Chuẩn hóa dữ liệu: Đảm bảo có đủ các ngày trong tháng (ngày không bán là 0)
+        data = {}
+        for day in range(1, last_day + 1):
+            data[day] = 0
+            
+        for r in results:
+            data[r["_id"]] = r["daily_revenue"]
+            
+        return data, sum(data.values()), len(list(self.collection.find({"created_at": {"$gte": start_date, "$lte": end_date}})))
+
+    def get_category_stats(self, month, year):
+        """Thống kê tỷ trọng doanh thu theo danh mục (cần lookup sang bảng products)"""
+        start_date = datetime(year, month, 1)
+        last_day = calendar.monthrange(year, month)[1]
+        end_date = datetime(year, month, last_day, 23, 59, 59)
+
+        pipeline = [
+            {"$match": {"created_at": {"$gte": start_date, "$lte": end_date}}},
+            {"$unwind": "$items"},
+            {
+                "$lookup": {
+                    "from": "products",
+                    "localField": "items.product_id",
+                    "foreignField": "_id",
+                    "as": "product_info"
+                }
+            },
+            {"$unwind": "$product_info"},
+            {
+                "$group": {
+                    "_id": "$product_info.category", # Group theo Category
+                    "total_revenue": {"$sum": "$items.total_line"}
+                }
+            }
         ]
         return list(self.collection.aggregate(pipeline))

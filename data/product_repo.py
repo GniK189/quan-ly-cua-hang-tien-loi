@@ -16,6 +16,12 @@ class ProductRepo:
             {"_id": ObjectId(product_id)},
             {"$inc": {"stock": -quantity_sold}}
         )
+
+    def update_product_info(self, product_id, update_data):
+        self.collection.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$set": update_data}
+        )
     
     def delete_product(self, product_id):
         self.collection.delete_one({"_id": ObjectId(product_id)})

@@ -13,7 +13,7 @@ class MainWindow(tk.Tk):
         self.title("Hệ Thống Quản Lý Cửa Hàng Tiện Lợi (AI Powered)")
         
         # 1. Tăng kích thước cửa sổ chính
-        self.geometry("1200x800") 
+        self.state('zoomed')
         
         # 2. Cấu hình Style chung cho toàn bộ App (To và Rõ hơn)
         self.setup_styles()
