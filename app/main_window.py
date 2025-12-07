@@ -1,11 +1,13 @@
 # app/main_window.py
 import tkinter as tk
-from tkinter import ttk
+import sys
+from tkinter import ttk, messagebox
 from app.products_view import ProductsView
 from app.sales_view import SalesView
 from app.stats_ai_view import StatsAIView
 from app.history_view import HistoryView
-from app.statistics_view import StatisticsView 
+from app.statistics_view import StatisticsView
+
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -54,6 +56,7 @@ class MainWindow(tk.Tk):
         self.notebook.add(self.stats_tab, text="🤖 AI Trợ Lý")
 
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_change)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def setup_styles(self):
         style = ttk.Style()
@@ -94,3 +97,9 @@ class MainWindow(tk.Tk):
             self.history_tab.load_data()
         elif selected_tab == str(self.stats_view_tab):
             self.stats_view_tab.load_data()
+
+    def on_closing(self):
+        # (Tùy chọn) Hỏi xác nhận trước khi thoát
+        if messagebox.askokcancel("Thoát", "Bạn có chắc muốn thoát chương trình?"):
+            self.destroy()  # Hủy giao diện
+            sys.exit()

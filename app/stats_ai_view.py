@@ -127,7 +127,7 @@ class StatsAIView(ttk.Frame):
         self.txt_result.pack(fill="both", expand=True, padx=20, pady=10)
         
         # Text mặc định
-        self.txt_result.load_markdown("# Xin chào!\nNhấn nút **Phân tích** để nhận báo cáo.")
+        self.txt_result.load_markdown("# Xin chào!\nNhấn nút **Phân tích & Gợi ý nhập hàng ngay** để nhận báo cáo.")
 
     def run_analysis(self):
         self.btn_analyze.config(state="disabled")
