@@ -190,7 +190,7 @@ class SalesView(ttk.Frame):
             return
         self.pay_window = Toplevel(self)
         self.pay_window.title("Xác nhận & Thanh toán")
-        self.pay_window.geometry("500x600") 
+        # self.pay_window.geometry("500x600") 
         self.pay_window.grab_set() 
         list_frame = ttk.LabelFrame(self.pay_window, text="Chi tiết đơn hàng", padding=10)
         list_frame.pack(fill="both", expand=True, padx=10, pady=5)

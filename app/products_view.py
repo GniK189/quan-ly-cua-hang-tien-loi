@@ -170,7 +170,7 @@ class ProductsView(ttk.Frame):
     def create_modal_form(self, title, is_edit=False, product_data=None):
         modal = Toplevel(self)
         modal.title(title)
-        modal.geometry("450x400")
+        # modal.geometry("450x400")
         modal.grab_set() 
         
         form = ttk.Frame(modal, padding=20)

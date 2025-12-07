@@ -10,12 +10,24 @@ from app.statistics_view import StatisticsView
 class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Hệ Thống Quản Lý Cửa Hàng Tiện Lợi (AI Powered)")
+        self.title("Hệ Thống Quản Lý Cửa Hàng Tiện Lợi")
         
-        # 1. Tăng kích thước cửa sổ chính
-        self.state('zoomed')
+        # --- ĐOẠN CODE QUAN TRỌNG ĐỂ FULL SCREEN ---
+        # Lấy kích thước màn hình
+        w, h = self.winfo_screenwidth(), self.winfo_screenheight()
         
-        # 2. Cấu hình Style chung cho toàn bộ App (To và Rõ hơn)
+        try:
+            # Ưu tiên 1: Chế độ Zoom chuẩn của Windows
+            self.state('zoomed')
+        except:
+            try:
+                # Ưu tiên 2: Chế độ Zoom của Linux/Mac
+                self.attributes('-zoomed', True)
+            except:
+                # Ưu tiên 3: Ép kích thước thủ công nếu 2 cách trên lỗi
+                self.geometry(f"{w}x{h}+0+0")
+        # -------------------------------------------
+        
         self.setup_styles()
 
         self.notebook = ttk.Notebook(self)

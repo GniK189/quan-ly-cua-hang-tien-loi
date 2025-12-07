@@ -151,7 +151,7 @@ class HistoryView(ttk.Frame):
 
         popup = Toplevel(self)
         popup.title(f"Chi tiết đơn hàng #{str(order['_id'])[-6:].upper()}")
-        popup.geometry("500x500") 
+        # popup.geometry("500x500") 
 
         info_frame = ttk.LabelFrame(popup, text="Thông tin chung", padding=10)
         info_frame.pack(fill="x", padx=10, pady=5)
