@@ -40,11 +40,13 @@ class SalesView(ttk.Frame):
         bottom_frame = ttk.Frame(self)
         bottom_frame.pack(fill="x", padx=10, pady=10)
         
-        self.lbl_total = ttk.Label(bottom_frame, text="Tổng cộng: 0 VNĐ", font=("Arial", 14, "bold"))
+        # TĂNG SIZE FONT TẠI ĐÂY (size 18)
+        self.lbl_total = ttk.Label(bottom_frame, text="Tổng cộng: 0 VNĐ", font=("Arial", 18, "bold"), foreground="#d35400")
         self.lbl_total.pack(side="left")
 
-        # Nút thanh toán gọi hàm open_payment_dialog
-        ttk.Button(bottom_frame, text="THANH TOÁN", command=self.open_payment_dialog).pack(side="right")
+        # TĂNG PADDING CHO NÚT THANH TOÁN
+        btn_pay = ttk.Button(bottom_frame, text="THANH TOÁN", command=self.open_payment_dialog)
+        btn_pay.pack(side="right", ipady=5, ipadx=10) # ipady làm nút cao hơn
         
         self.refresh_products()
 
