@@ -24,6 +24,42 @@ class OrderRepo:
     def get_all_orders(self):
         return list(self.collection.find().sort("created_at", pymongo.DESCENDING))
     
+    def search_orders(self, keyword=None, date_from=None, date_to=None):
+        """
+        Tìm kiếm đơn hàng theo từ khóa (Mã đơn) và khoảng thời gian
+        """
+        query_filter = {}
+
+        # 1. Lọc theo ngày (Date Range)
+        if date_from or date_to:
+            query_filter["created_at"] = {}
+            if date_from:
+                # Bắt đầu từ 00:00:00 của ngày đó
+                query_filter["created_at"]["$gte"] = date_from
+            if date_to:
+                # Kết thúc lúc 23:59:59 của ngày đó
+                query_filter["created_at"]["$lte"] = date_to
+
+        # Lấy dữ liệu từ DB (Sắp xếp mới nhất trước)
+        cursor = self.collection.find(query_filter).sort("created_at", pymongo.DESCENDING)
+        results = list(cursor)
+
+        # 2. Lọc theo từ khóa (ID) - Xử lý phía Python cho linh hoạt với ObjectId
+        if keyword:
+            keyword = keyword.strip().upper()
+            filtered_results = []
+            for order in results:
+                # Lấy 6 ký tự cuối của ID để so sánh (giống hiển thị trên UI)
+                short_id = str(order["_id"])[-6:].upper()
+                full_id = str(order["_id"]).upper()
+                
+                # Tìm tương đối: Khớp mã ngắn hoặc mã dài
+                if keyword in short_id or keyword in full_id:
+                    filtered_results.append(order)
+            return filtered_results
+        
+        return results
+    
     def get_revenue_last_7_days(self):
         """Tính doanh thu 7 ngày gần nhất (trả về dictionary {ngày: doanh_thu})"""
         start_date = datetime.now() - timedelta(days=6)
